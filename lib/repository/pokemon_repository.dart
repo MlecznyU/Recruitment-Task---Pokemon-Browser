@@ -37,11 +37,11 @@ class PokemonRepository {
   }
 
   Future<Either<List<Pokemon>, String>> getListOfPokemons() async {
-    final listOfMoorPokemons = await _dao.getAllPokemons();
+    final listOfPokemons = await _dao.getAllPokemons();
 
-    if (listOfMoorPokemons != null) {
-      if (listOfMoorPokemons.isNotEmpty) {
-        return Left(listOfMoorPokemons.map(Pokemon.fromMoor).toList());
+    if (listOfPokemons != null) {
+      if (listOfPokemons.isNotEmpty) {
+        return Left(listOfPokemons);
       }
     }
 
@@ -85,17 +85,19 @@ class PokemonRepository {
       ));
 
       for (final type in pokemon.types) {
-        await _dao.insertType(MoorTypeCompanion(
-          id: Value(pokemon.id),
-          typeName: Value(type.name),
-        ));
+        await _dao.insertType(
+          MoorTypeCompanion(typeName: Value(type.name)),
+          pokemon.id,
+        );
       }
       for (final stat in pokemon.stats) {
-        await _dao.insertStat(MoorStatCompanion(
-          id: Value(pokemon.id),
-          statName: Value(stat.name),
-          value: Value(stat.value),
-        ));
+        await _dao.insertStat(
+          MoorStatCompanion(
+            statName: Value(stat.name),
+            value: Value(stat.value),
+          ),
+          pokemon.id,
+        );
       }
     }
   }

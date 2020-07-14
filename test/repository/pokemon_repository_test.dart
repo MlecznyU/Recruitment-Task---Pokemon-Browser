@@ -66,7 +66,7 @@ void main() {
       'getAllPokemons returns Left with List of Pokemon objects when '
       'dao returns list of pokemons', () async {
     when(_daoMock.getAllPokemons())
-        .thenAnswer((_) async => Future.value(tMoorPokemonList));
+        .thenAnswer((_) async => Future.value(tPokemonList));
 
     final result = await _pokemonRepository.getListOfPokemons();
 
@@ -108,14 +108,17 @@ void main() {
       name: Value(tPokemon.name),
     )));
 
-    verify(_daoMock.insertType(MoorTypeCompanion(
-      id: Value(tPokemon.id),
-      typeName: Value(tPokemonType.name),
-    )));
-    verify(_daoMock.insertStat(MoorStatCompanion(
-      id: Value(tPokemon.id),
-      statName: Value(tPokemonStat.name),
-      value: Value(tPokemonStat.value),
-    )));
+    verify(_daoMock.insertType(
+      MoorTypeCompanion(typeName: Value(tPokemonType.name)),
+      tPokemonId,
+    ));
+
+    verify(_daoMock.insertStat(
+      MoorStatCompanion(
+        statName: Value(tPokemonStat.name),
+        value: Value(tPokemonStat.value),
+      ),
+      tPokemonId,
+    ));
   });
 }

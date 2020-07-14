@@ -1,5 +1,8 @@
 import 'package:injectable/injectable.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import '../../repository/model/pokemon.dart';
+import 'base_info/moor_pokemon_base_info_stat_link.dart';
+import 'base_info/moor_pokemon_base_info_type_link.dart';
 import 'base_info/moor_pokemon_base_info.dart';
 import '../database.dart';
 import 'stats/moor_stat.dart';
@@ -12,41 +15,83 @@ part 'pokemon_dao.g.dart';
   MoorPokemonBaseInfo,
   MoorStat,
   MoorType,
+  MoorPokemonBaseInfoTypeLink,
+  MoorPokemonBaseInfoStatLink,
 ])
 class PokemonDao extends DatabaseAccessor<Database> with _$PokemonDaoMixin {
   final Database db;
 
   PokemonDao(this.db) : super(db);
 
+  Future<List<Pokemon>> getAllPokemons() async {
+    final pokemons = await select(moorPokemonBaseInfo).get();
+
+    final typeRecords = await select(moorType).join([
+      innerJoin(
+        moorPokemonBaseInfoTypeLink,
+        moorPokemonBaseInfoTypeLink.type.equalsExp(moorType.id),
+      )
+    ]).get();
+    final statRecords = await select(moorStat).join([
+      innerJoin(
+        moorPokemonBaseInfoStatLink,
+        moorPokemonBaseInfoStatLink.stat.equalsExp(moorStat.id),
+      )
+    ]).get();
+
+    return pokemons.map(
+      (record) {
+        return Pokemon(
+          id: record.id,
+          name: record.name,
+          exp: record.exp,
+          weight: record.weight,
+          sprite: record.sprite,
+          height: record.height,
+          types: [
+            for (final type in typeRecords)
+              if (type.readTable(moorPokemonBaseInfoTypeLink).baseInfo ==
+                  record.id)
+                PokemonType(type.readTable(moorType).typeName)
+          ],
+          stats: [
+            for (final stat in statRecords)
+              if (stat.readTable(moorPokemonBaseInfoStatLink).baseInfo ==
+                  record.id)
+                PokemonStat(
+                  stat.readTable(moorStat).statName,
+                  stat.readTable(moorStat).value,
+                )
+          ],
+        );
+      },
+    ).toList();
+  }
+
   Future<void> insertBaseInfo(Insertable<MoorPokemonBaseInfoData> baseInfo) =>
       into(moorPokemonBaseInfo).insert(baseInfo);
 
-  Future<void> insertType(Insertable<MoorTypeData> type) =>
-      into(moorType).insert(type);
+  Future<void> insertType(Insertable<MoorTypeData> type, int pokemonId) async {
+    final typeId =
+        await into(moorType).insert(type, mode: InsertMode.insertOrIgnore);
 
-  Future<void> insertStat(Insertable<MoorStatData> stat) =>
-      into(moorStat).insert(stat);
+    into(moorPokemonBaseInfoTypeLink).insert(
+      MoorPokemonBaseInfoTypeLinkCompanion(
+        baseInfo: Value(pokemonId),
+        type: Value(typeId),
+      ),
+    );
+  }
 
-  Future<List<MoorPokemon>> getAllPokemons() async {
-    final pokemonBaseInfo = await select(moorPokemonBaseInfo).get();
+  Future<void> insertStat(Insertable<MoorStatData> stat, int pokemonId) async {
+    final statId =
+        await into(moorStat).insert(stat, mode: InsertMode.insertOrIgnore);
 
-    final List<MoorPokemon> moorPokemons = [];
-
-    for (final pokemon in pokemonBaseInfo) {
-      final pokemonStats = await (select(moorStat)
-            ..where((stat) => stat.id.equals(pokemon.id)))
-          .get();
-
-      final pokemonTypes = await (select(moorType)
-            ..where((type) => type.id.equals(pokemon.id)))
-          .get();
-
-      moorPokemons.add(MoorPokemon(
-        pokemon,
-        pokemonTypes,
-        pokemonStats,
-      ));
-    }
-    return moorPokemons;
+    into(moorPokemonBaseInfoStatLink).insert(
+      MoorPokemonBaseInfoStatLinkCompanion(
+        baseInfo: Value(pokemonId),
+        stat: Value(statId),
+      ),
+    );
   }
 }

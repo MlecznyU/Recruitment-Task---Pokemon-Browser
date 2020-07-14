@@ -91,10 +91,9 @@ class MoorTypeCompanion extends UpdateCompanion<MoorTypeData> {
     this.typeName = const Value.absent(),
   });
   MoorTypeCompanion.insert({
-    @required int id,
+    this.id = const Value.absent(),
     @required String typeName,
-  })  : id = Value(id),
-        typeName = Value(typeName);
+  }) : typeName = Value(typeName);
   static Insertable<MoorTypeData> custom({
     Expression<int> id,
     Expression<String> typeName,
@@ -144,11 +143,8 @@ class $MoorTypeTable extends MoorType
   @override
   GeneratedIntColumn get id => _id ??= _constructId();
   GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn(
-      'id',
-      $tableName,
-      false,
-    );
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _typeNameMeta = const VerificationMeta('typeName');
@@ -178,8 +174,6 @@ class $MoorTypeTable extends MoorType
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
     }
     if (data.containsKey('type_name')) {
       context.handle(_typeNameMeta,
@@ -191,7 +185,7 @@ class $MoorTypeTable extends MoorType
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id, typeName};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   MoorTypeData map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -692,11 +686,10 @@ class MoorStatCompanion extends UpdateCompanion<MoorStatData> {
     this.value = const Value.absent(),
   });
   MoorStatCompanion.insert({
-    @required int id,
+    this.id = const Value.absent(),
     @required String statName,
     @required int value,
-  })  : id = Value(id),
-        statName = Value(statName),
+  })  : statName = Value(statName),
         value = Value(value);
   static Insertable<MoorStatData> custom({
     Expression<int> id,
@@ -755,11 +748,8 @@ class $MoorStatTable extends MoorStat
   @override
   GeneratedIntColumn get id => _id ??= _constructId();
   GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn(
-      'id',
-      $tableName,
-      false,
-    );
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _statNameMeta = const VerificationMeta('statName');
@@ -801,8 +791,6 @@ class $MoorStatTable extends MoorStat
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
     }
     if (data.containsKey('stat_name')) {
       context.handle(_statNameMeta,
@@ -820,7 +808,7 @@ class $MoorStatTable extends MoorStat
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id, statName};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   MoorStatData map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -833,6 +821,422 @@ class $MoorStatTable extends MoorStat
   }
 }
 
+class MoorPokemonBaseInfoTypeLinkData extends DataClass
+    implements Insertable<MoorPokemonBaseInfoTypeLinkData> {
+  final int baseInfo;
+  final int type;
+  MoorPokemonBaseInfoTypeLinkData(
+      {@required this.baseInfo, @required this.type});
+  factory MoorPokemonBaseInfoTypeLinkData.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    return MoorPokemonBaseInfoTypeLinkData(
+      baseInfo:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}base_info']),
+      type: intType.mapFromDatabaseResponse(data['${effectivePrefix}type']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || baseInfo != null) {
+      map['base_info'] = Variable<int>(baseInfo);
+    }
+    if (!nullToAbsent || type != null) {
+      map['type'] = Variable<int>(type);
+    }
+    return map;
+  }
+
+  MoorPokemonBaseInfoTypeLinkCompanion toCompanion(bool nullToAbsent) {
+    return MoorPokemonBaseInfoTypeLinkCompanion(
+      baseInfo: baseInfo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(baseInfo),
+      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
+    );
+  }
+
+  factory MoorPokemonBaseInfoTypeLinkData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return MoorPokemonBaseInfoTypeLinkData(
+      baseInfo: serializer.fromJson<int>(json['baseInfo']),
+      type: serializer.fromJson<int>(json['type']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'baseInfo': serializer.toJson<int>(baseInfo),
+      'type': serializer.toJson<int>(type),
+    };
+  }
+
+  MoorPokemonBaseInfoTypeLinkData copyWith({int baseInfo, int type}) =>
+      MoorPokemonBaseInfoTypeLinkData(
+        baseInfo: baseInfo ?? this.baseInfo,
+        type: type ?? this.type,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('MoorPokemonBaseInfoTypeLinkData(')
+          ..write('baseInfo: $baseInfo, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(baseInfo.hashCode, type.hashCode));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is MoorPokemonBaseInfoTypeLinkData &&
+          other.baseInfo == this.baseInfo &&
+          other.type == this.type);
+}
+
+class MoorPokemonBaseInfoTypeLinkCompanion
+    extends UpdateCompanion<MoorPokemonBaseInfoTypeLinkData> {
+  final Value<int> baseInfo;
+  final Value<int> type;
+  const MoorPokemonBaseInfoTypeLinkCompanion({
+    this.baseInfo = const Value.absent(),
+    this.type = const Value.absent(),
+  });
+  MoorPokemonBaseInfoTypeLinkCompanion.insert({
+    @required int baseInfo,
+    @required int type,
+  })  : baseInfo = Value(baseInfo),
+        type = Value(type);
+  static Insertable<MoorPokemonBaseInfoTypeLinkData> custom({
+    Expression<int> baseInfo,
+    Expression<int> type,
+  }) {
+    return RawValuesInsertable({
+      if (baseInfo != null) 'base_info': baseInfo,
+      if (type != null) 'type': type,
+    });
+  }
+
+  MoorPokemonBaseInfoTypeLinkCompanion copyWith(
+      {Value<int> baseInfo, Value<int> type}) {
+    return MoorPokemonBaseInfoTypeLinkCompanion(
+      baseInfo: baseInfo ?? this.baseInfo,
+      type: type ?? this.type,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (baseInfo.present) {
+      map['base_info'] = Variable<int>(baseInfo.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<int>(type.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MoorPokemonBaseInfoTypeLinkCompanion(')
+          ..write('baseInfo: $baseInfo, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MoorPokemonBaseInfoTypeLinkTable extends MoorPokemonBaseInfoTypeLink
+    with
+        TableInfo<$MoorPokemonBaseInfoTypeLinkTable,
+            MoorPokemonBaseInfoTypeLinkData> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $MoorPokemonBaseInfoTypeLinkTable(this._db, [this._alias]);
+  final VerificationMeta _baseInfoMeta = const VerificationMeta('baseInfo');
+  GeneratedIntColumn _baseInfo;
+  @override
+  GeneratedIntColumn get baseInfo => _baseInfo ??= _constructBaseInfo();
+  GeneratedIntColumn _constructBaseInfo() {
+    return GeneratedIntColumn(
+      'base_info',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _typeMeta = const VerificationMeta('type');
+  GeneratedIntColumn _type;
+  @override
+  GeneratedIntColumn get type => _type ??= _constructType();
+  GeneratedIntColumn _constructType() {
+    return GeneratedIntColumn(
+      'type',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [baseInfo, type];
+  @override
+  $MoorPokemonBaseInfoTypeLinkTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'moor_pokemon_base_info_type_link';
+  @override
+  final String actualTableName = 'moor_pokemon_base_info_type_link';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<MoorPokemonBaseInfoTypeLinkData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('base_info')) {
+      context.handle(_baseInfoMeta,
+          baseInfo.isAcceptableOrUnknown(data['base_info'], _baseInfoMeta));
+    } else if (isInserting) {
+      context.missing(_baseInfoMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  @override
+  MoorPokemonBaseInfoTypeLinkData map(Map<String, dynamic> data,
+      {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return MoorPokemonBaseInfoTypeLinkData.fromData(data, _db,
+        prefix: effectivePrefix);
+  }
+
+  @override
+  $MoorPokemonBaseInfoTypeLinkTable createAlias(String alias) {
+    return $MoorPokemonBaseInfoTypeLinkTable(_db, alias);
+  }
+}
+
+class MoorPokemonBaseInfoStatLinkData extends DataClass
+    implements Insertable<MoorPokemonBaseInfoStatLinkData> {
+  final int baseInfo;
+  final int stat;
+  MoorPokemonBaseInfoStatLinkData(
+      {@required this.baseInfo, @required this.stat});
+  factory MoorPokemonBaseInfoStatLinkData.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    return MoorPokemonBaseInfoStatLinkData(
+      baseInfo:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}base_info']),
+      stat: intType.mapFromDatabaseResponse(data['${effectivePrefix}stat']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || baseInfo != null) {
+      map['base_info'] = Variable<int>(baseInfo);
+    }
+    if (!nullToAbsent || stat != null) {
+      map['stat'] = Variable<int>(stat);
+    }
+    return map;
+  }
+
+  MoorPokemonBaseInfoStatLinkCompanion toCompanion(bool nullToAbsent) {
+    return MoorPokemonBaseInfoStatLinkCompanion(
+      baseInfo: baseInfo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(baseInfo),
+      stat: stat == null && nullToAbsent ? const Value.absent() : Value(stat),
+    );
+  }
+
+  factory MoorPokemonBaseInfoStatLinkData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return MoorPokemonBaseInfoStatLinkData(
+      baseInfo: serializer.fromJson<int>(json['baseInfo']),
+      stat: serializer.fromJson<int>(json['stat']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'baseInfo': serializer.toJson<int>(baseInfo),
+      'stat': serializer.toJson<int>(stat),
+    };
+  }
+
+  MoorPokemonBaseInfoStatLinkData copyWith({int baseInfo, int stat}) =>
+      MoorPokemonBaseInfoStatLinkData(
+        baseInfo: baseInfo ?? this.baseInfo,
+        stat: stat ?? this.stat,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('MoorPokemonBaseInfoStatLinkData(')
+          ..write('baseInfo: $baseInfo, ')
+          ..write('stat: $stat')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(baseInfo.hashCode, stat.hashCode));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is MoorPokemonBaseInfoStatLinkData &&
+          other.baseInfo == this.baseInfo &&
+          other.stat == this.stat);
+}
+
+class MoorPokemonBaseInfoStatLinkCompanion
+    extends UpdateCompanion<MoorPokemonBaseInfoStatLinkData> {
+  final Value<int> baseInfo;
+  final Value<int> stat;
+  const MoorPokemonBaseInfoStatLinkCompanion({
+    this.baseInfo = const Value.absent(),
+    this.stat = const Value.absent(),
+  });
+  MoorPokemonBaseInfoStatLinkCompanion.insert({
+    @required int baseInfo,
+    @required int stat,
+  })  : baseInfo = Value(baseInfo),
+        stat = Value(stat);
+  static Insertable<MoorPokemonBaseInfoStatLinkData> custom({
+    Expression<int> baseInfo,
+    Expression<int> stat,
+  }) {
+    return RawValuesInsertable({
+      if (baseInfo != null) 'base_info': baseInfo,
+      if (stat != null) 'stat': stat,
+    });
+  }
+
+  MoorPokemonBaseInfoStatLinkCompanion copyWith(
+      {Value<int> baseInfo, Value<int> stat}) {
+    return MoorPokemonBaseInfoStatLinkCompanion(
+      baseInfo: baseInfo ?? this.baseInfo,
+      stat: stat ?? this.stat,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (baseInfo.present) {
+      map['base_info'] = Variable<int>(baseInfo.value);
+    }
+    if (stat.present) {
+      map['stat'] = Variable<int>(stat.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MoorPokemonBaseInfoStatLinkCompanion(')
+          ..write('baseInfo: $baseInfo, ')
+          ..write('stat: $stat')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MoorPokemonBaseInfoStatLinkTable extends MoorPokemonBaseInfoStatLink
+    with
+        TableInfo<$MoorPokemonBaseInfoStatLinkTable,
+            MoorPokemonBaseInfoStatLinkData> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $MoorPokemonBaseInfoStatLinkTable(this._db, [this._alias]);
+  final VerificationMeta _baseInfoMeta = const VerificationMeta('baseInfo');
+  GeneratedIntColumn _baseInfo;
+  @override
+  GeneratedIntColumn get baseInfo => _baseInfo ??= _constructBaseInfo();
+  GeneratedIntColumn _constructBaseInfo() {
+    return GeneratedIntColumn(
+      'base_info',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _statMeta = const VerificationMeta('stat');
+  GeneratedIntColumn _stat;
+  @override
+  GeneratedIntColumn get stat => _stat ??= _constructStat();
+  GeneratedIntColumn _constructStat() {
+    return GeneratedIntColumn(
+      'stat',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [baseInfo, stat];
+  @override
+  $MoorPokemonBaseInfoStatLinkTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'moor_pokemon_base_info_stat_link';
+  @override
+  final String actualTableName = 'moor_pokemon_base_info_stat_link';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<MoorPokemonBaseInfoStatLinkData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('base_info')) {
+      context.handle(_baseInfoMeta,
+          baseInfo.isAcceptableOrUnknown(data['base_info'], _baseInfoMeta));
+    } else if (isInserting) {
+      context.missing(_baseInfoMeta);
+    }
+    if (data.containsKey('stat')) {
+      context.handle(
+          _statMeta, stat.isAcceptableOrUnknown(data['stat'], _statMeta));
+    } else if (isInserting) {
+      context.missing(_statMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  @override
+  MoorPokemonBaseInfoStatLinkData map(Map<String, dynamic> data,
+      {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return MoorPokemonBaseInfoStatLinkData.fromData(data, _db,
+        prefix: effectivePrefix);
+  }
+
+  @override
+  $MoorPokemonBaseInfoStatLinkTable createAlias(String alias) {
+    return $MoorPokemonBaseInfoStatLinkTable(_db, alias);
+  }
+}
+
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $MoorTypeTable _moorType;
@@ -842,9 +1246,22 @@ abstract class _$Database extends GeneratedDatabase {
       _moorPokemonBaseInfo ??= $MoorPokemonBaseInfoTable(this);
   $MoorStatTable _moorStat;
   $MoorStatTable get moorStat => _moorStat ??= $MoorStatTable(this);
+  $MoorPokemonBaseInfoTypeLinkTable _moorPokemonBaseInfoTypeLink;
+  $MoorPokemonBaseInfoTypeLinkTable get moorPokemonBaseInfoTypeLink =>
+      _moorPokemonBaseInfoTypeLink ??= $MoorPokemonBaseInfoTypeLinkTable(this);
+  $MoorPokemonBaseInfoStatLinkTable _moorPokemonBaseInfoStatLink;
+  $MoorPokemonBaseInfoStatLinkTable get moorPokemonBaseInfoStatLink =>
+      _moorPokemonBaseInfoStatLink ??= $MoorPokemonBaseInfoStatLinkTable(this);
+  PokemonDao _pokemonDao;
+  PokemonDao get pokemonDao => _pokemonDao ??= PokemonDao(this as Database);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [moorType, moorPokemonBaseInfo, moorStat];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        moorType,
+        moorPokemonBaseInfo,
+        moorStat,
+        moorPokemonBaseInfoTypeLink,
+        moorPokemonBaseInfoStatLink
+      ];
 }

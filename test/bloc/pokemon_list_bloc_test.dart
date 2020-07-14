@@ -13,8 +13,7 @@ class PokemonRepositoryMock extends Mock implements PokemonRepository {}
 PokemonRepositoryMock _repositoryMock;
 GlobalKey<NavigatorState> _globalKey;
 
-// ignore: type_annotate_public_apis, always_declare_return_types
-main() {
+void main() {
   setUp(() {
     _repositoryMock = PokemonRepositoryMock();
     _globalKey = GlobalKey<NavigatorState>();

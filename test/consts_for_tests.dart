@@ -1,5 +1,4 @@
 import 'package:pokemonbrowser/database/database.dart';
-import 'package:pokemonbrowser/database/pokemon/base_info/moor_pokemon_base_info.dart';
 import 'package:pokemonbrowser/network/network_model/pokemon/network_pokemon.dart';
 import 'package:pokemonbrowser/repository/model/pokemon.dart';
 
@@ -77,12 +76,6 @@ final MoorStatData tMoorStatData = MoorStatData(
   value: tPokemonStat.value,
 );
 final List<MoorStatData> tMoorStats = [tMoorStatData, tMoorStatData];
-final MoorPokemon tMoorPokemon = MoorPokemon(
-  tMoorBaseInfoData,
-  tMoorTypes,
-  tMoorStats,
-);
-final List<MoorPokemon> tMoorPokemonList = [tMoorPokemon, tMoorPokemon];
 
 final Map<String, Object> tJsonSinglePokemon = {
   'base_experience': tPokemonExp,

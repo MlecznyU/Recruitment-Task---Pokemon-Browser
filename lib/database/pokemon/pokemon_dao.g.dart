@@ -11,4 +11,8 @@ mixin _$PokemonDaoMixin on DatabaseAccessor<Database> {
       attachedDatabase.moorPokemonBaseInfo;
   $MoorStatTable get moorStat => attachedDatabase.moorStat;
   $MoorTypeTable get moorType => attachedDatabase.moorType;
+  $MoorPokemonBaseInfoTypeLinkTable get moorPokemonBaseInfoTypeLink =>
+      attachedDatabase.moorPokemonBaseInfoTypeLink;
+  $MoorPokemonBaseInfoStatLinkTable get moorPokemonBaseInfoStatLink =>
+      attachedDatabase.moorPokemonBaseInfoStatLink;
 }
